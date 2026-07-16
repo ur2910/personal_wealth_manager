@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Personal Wealth Assistant</title>
+<title>Personal Wealth Manager</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -699,27 +699,27 @@
       <div class="empty-icon">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
       </div>
-      <div class="empty-title">Your financial advisor is ready</div>
+      <div class="empty-title">Your Wealth Manager is ready</div>
       <div class="empty-sub">Ask about investments, sector trends, rebalancing, or retirement planning — personalized to Jane's profile.</div>
     </div>
   </div>
 
   <div class="input-area">
     <div class="suggestions" id="suggestions">
-      <button class="suggestion-btn" onclick="fillSuggestion(this)">Should I rebalance my portfolio?</button>
+      <button class="suggestion-btn" onclick="fillSuggestion(this)">Which sectors should I invest more in?</button>
       <button class="suggestion-btn" onclick="fillSuggestion(this)">Best sectors for passive income?</button>
-      <button class="suggestion-btn" onclick="fillSuggestion(this)">How should I split my $2,000/month?</button>
-      <button class="suggestion-btn" onclick="fillSuggestion(this)">529 plan strategy for both kids?</button>
+      <button class="suggestion-btn" onclick="fillSuggestion(this)">Do I have enough emergency funds?</button>
+      <button class="suggestion-btn" onclick="fillSuggestion(this)">What should be my strategy for education savings?</button>
     </div>
     <div class="input-row">
       <div class="input-wrap">
-        <textarea id="chat-input" rows="1" placeholder="Ask Jane's wealth assistant anything…"></textarea>
+        <textarea id="chat-input" rows="1" placeholder="What can I do for you?"></textarea>
       </div>
       <button id="send-btn" onclick="sendMessage()" title="Send">
         <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
       </button>
     </div>
-    <div class="input-hint">Powered by n8n · Claude AI · Live market data via Tavily &nbsp;·&nbsp; Not financial advice</div>
+    <div class="input-hint">Powered by n8n · Claude AI · Live market data via Tavily &nbsp;·&nbsp; Disclaimer: AI can make mistakes. </div>
   </div>
 </main>
 
@@ -762,7 +762,7 @@
 
     const label = document.createElement('div');
     label.className = 'message-label';
-    label.textContent = role === 'user' ? 'You' : 'Wealth Assistant';
+    label.textContent = role === 'user' ? 'You' : 'Wealth Manager';
 
     const bubble = document.createElement('div');
     bubble.className = `bubble ${role}`;
