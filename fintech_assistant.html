@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal Wealth Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0B1F3A;
+    --navy-mid: #152D4E;
+    --navy-light: #1E3D64;
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-pale: #F5EDD6;
+    --cream: #FAFAF7;
+    --white: #FFFFFF;
+    --text-primary: #0B1F3A;
+    --text-secondary: #4A5568;
+    --text-muted: #718096;
+    --border: #E2E8F0;
+    --border-gold: #C9A84C40;
+    --success: #276749;
+    --success-bg: #F0FDF4;
+    --warning: #92400E;
+    --warning-bg: #FFFBEB;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--cream);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  /* Header */
+  header {
+    grid-column: 1 / -1;
+    background: var(--navy);
+    padding: 0 2rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--navy-light);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-mark {
+    width: 32px;
+    height: 32px;
+    background: var(--gold);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-mark svg { width: 18px; height: 18px; fill: var(--navy); }
+
+  .logo-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--white);
+    letter-spacing: 0.01em;
+  }
+
+  .logo-sub {
+    font-size: 11px;
+    color: var(--gold-light);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+
+  .header-badge {
+    font-size: 11px;
+    color: var(--gold-light);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid var(--gold-light);
+    padding: 4px 10px;
+    border-radius: 20px;
+    opacity: 0.7;
+  }
+
+  /* Sidebar */
+  aside {
+    background: var(--white);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  /* Profile card */
+  .profile-card {
+    background: var(--navy);
+    border-radius: 12px;
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .profile-card::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.08;
+  }
+
+  .profile-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 0.75rem;
+  }
+
+  .profile-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 2px;
+  }
+
+  .profile-sub {
+    font-size: 12px;
+    color: var(--gold-light);
+    opacity: 0.8;
+  }
+
+  /* Profile stats grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .stat-value {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+
+  .stat-unit {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* Allocation bar */
+  .allocation-section { margin-top: 0.25rem; }
+
+  .allocation-bar {
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    margin: 0.5rem 0;
+    gap: 2px;
+  }
+
+  .bar-equity { background: var(--navy); flex: 50; }
+  .bar-bonds { background: var(--gold); flex: 40; }
+  .bar-cash { background: #CBD5E0; flex: 10; }
+
+  .allocation-legend {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  /* Goals */
+  .goals-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+  .goal-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 0.5rem 0.75rem;
+    background: var(--cream);
+    border-radius: 6px;
+    border-left: 3px solid var(--gold);
+  }
+
+  .goal-num {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--gold);
+    min-width: 14px;
+  }
+
+  /* Main content */
+  main {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Chat area */
+  .chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem;
+    opacity: 0.6;
+  }
+
+  .empty-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--gold-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+  }
+
+  .empty-icon svg { width: 24px; height: 24px; fill: var(--gold); }
+
+  .empty-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    max-width: 300px;
+    line-height: 1.6;
+  }
+
+  /* Message bubbles */
+  .message { display: flex; flex-direction: column; gap: 4px; max-width: 100%; }
+
+  .message.user { align-items: flex-end; }
+  .message.assistant { align-items: flex-start; }
+
+  .message-label {
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 500;
+    padding: 0 4px;
+  }
+
+  .bubble {
+    padding: 0.875rem 1.125rem;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.7;
+    max-width: 88%;
+  }
+
+  .bubble.user {
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 12px 12px 2px 12px;
+  }
+
+  .bubble.assistant {
+    background: var(--white);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    border-radius: 12px 12px 12px 2px;
+  }
+
+  /* Formatted response */
+  .response-content h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--navy);
+    margin: 1rem 0 0.5rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 1px solid var(--border-gold);
+  }
+
+  .response-content h3:first-child { margin-top: 0; }
+
+  .response-content p { margin-bottom: 0.75rem; font-size: 14px; line-height: 1.7; }
+
+  .response-content ul {
+    margin: 0.5rem 0 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .response-content li { font-size: 14px; line-height: 1.6; }
+
+  .flag-box {
+    border-left: 3px solid var(--gold);
+    background: var(--gold-pale);
+    padding: 0.75rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin: 0.75rem 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-primary);
+  }
+
+  .flag-box.warning {
+    border-left-color: #D97706;
+    background: var(--warning-bg);
+    color: var(--warning);
+  }
+
+  .flag-box.success {
+    border-left-color: #276749;
+    background: var(--success-bg);
+    color: var(--success);
+  }
+
+  .disclaimer {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-style: italic;
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    line-height: 1.6;
+  }
+
+  /* Sector tags */
+  .sector-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0.5rem 0; }
+
+  .sector-tag {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border-gold);
+    color: var(--navy);
+    background: var(--gold-pale);
+  }
+
+  /* Input area */
+  .input-area {
+    padding: 1rem 1.5rem 1.25rem;
+    background: var(--white);
+    border-top: 1px solid var(--border);
+  }
+
+  .input-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-end;
+  }
+
+  .input-wrap { flex: 1; position: relative; }
+
+  #chat-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    resize: none;
+    outline: none;
+    color: var(--text-primary);
+    background: var(--cream);
+    line-height: 1.5;
+    min-height: 44px;
+    max-height: 120px;
+    transition: border-color 0.15s;
+  }
+
+  #chat-input:focus { border-color: var(--gold); background: var(--white); }
+  #chat-input::placeholder { color: var(--text-muted); }
+
+  #send-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: var(--navy);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+
+  #send-btn:hover { background: var(--navy-light); }
+  #send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  #send-btn svg { width: 18px; height: 18px; fill: none; stroke: white; stroke-width: 2; }
+
+  .input-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+    text-align: center;
+  }
+
+  /* Suggestions */
+  .suggestions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+  }
+
+  .suggestion-btn {
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .suggestion-btn:hover {
+    border-color: var(--gold);
+    color: var(--navy);
+    background: var(--gold-pale);
+  }
+
+  /* Loading */
+  .loading-bubble {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: 0.875rem 1.125rem;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px 12px 12px 2px;
+    width: fit-content;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes pulse {
+    0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; }
+    40% { transform: scale(1); opacity: 1; }
+  }
+
+  /* n8n webhook config */
+  .config-bar {
+    background: var(--navy-mid);
+    padding: 0.5rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .config-label {
+    font-size: 11px;
+    color: var(--gold-light);
+    opacity: 0.7;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  #webhook-url {
+    flex: 1;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(201, 168, 76, 0.3);
+    background: rgba(255,255,255,0.06);
+    color: var(--white);
+    outline: none;
+  }
+
+  #webhook-url:focus { border-color: var(--gold); }
+  #webhook-url::placeholder { color: rgba(255,255,255,0.3); }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #CBD5E0;
+    flex-shrink: 0;
+    transition: background 0.3s;
+  }
+
+  .status-dot.connected { background: #48BB78; }
+
+  /* Scrollbar */
+  .chat-area::-webkit-scrollbar { width: 4px; }
+  .chat-area::-webkit-scrollbar-track { background: transparent; }
+  .chat-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 20 20"><path d="M10 2L13 8H17L14 12L15 18L10 15L5 18L6 12L3 8H7L10 2Z"/></svg>
+    </div>
+    <div>
+      <div class="logo-text">Wealth Assistant</div>
+      <div class="logo-sub">Personal Finance Intelligence</div>
+    </div>
+  </div>
+  <div class="header-badge">Portfolio Demo</div>
+</header>
+
+<aside>
+  <div>
+    <div class="section-label">Client Profile</div>
+    <div class="profile-card">
+      <div class="profile-avatar">JD</div>
+      <div class="profile-name">Jane Doe</div>
+      <div class="profile-sub">Moderate risk · Target retirement 2044</div>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-label">Key Metrics</div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Age</div>
+        <div class="stat-value">41</div>
+        <div class="stat-unit">19 yrs to retirement</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Monthly Income</div>
+        <div class="stat-value">$15K</div>
+        <div class="stat-unit">per month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Investable</div>
+        <div class="stat-value">$2,000</div>
+        <div class="stat-unit">per month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Emergency Fund</div>
+        <div class="stat-value">8 mo</div>
+        <div class="stat-unit">well funded</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="allocation-section">
+    <div class="section-label">Current Allocation</div>
+    <div class="allocation-bar">
+      <div class="bar-equity"></div>
+      <div class="bar-bonds"></div>
+      <div class="bar-cash"></div>
+    </div>
+    <div class="allocation-legend">
+      <div class="legend-item">
+        <div class="legend-dot" style="background: var(--navy)"></div>
+        Equity 50%
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background: var(--gold)"></div>
+        Bonds 40%
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background: #CBD5E0"></div>
+        Cash 10%
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-label">Financial Goals</div>
+    <div class="goals-list">
+      <div class="goal-item"><span class="goal-num">01</span>Retirement security by age 60</div>
+      <div class="goal-item"><span class="goal-num">02</span>College fund — children ages 9 &amp; 2</div>
+      <div class="goal-item"><span class="goal-num">03</span>Build passive income stream</div>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-label">Profile Details</div>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border)">
+        <span style="color:var(--text-muted)">Risk tolerance</span>
+        <span style="font-weight:500">Moderate</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border)">
+        <span style="color:var(--text-muted)">Debt</span>
+        <span style="font-weight:500">Mortgage only</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0">
+        <span style="color:var(--text-muted)">Other income</span>
+        <span style="font-weight:500">None</span>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<main>
+  <div class="config-bar">
+    <span class="config-label">n8n webhook</span>
+    <input id="webhook-url" type="text" placeholder="http://localhost:5678/webhook/your-id" />
+    <div class="status-dot" id="status-dot"></div>
+  </div>
+
+  <div class="chat-area" id="chat-area">
+    <div class="empty-state" id="empty-state">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+      </div>
+      <div class="empty-title">Your financial advisor is ready</div>
+      <div class="empty-sub">Ask about investments, sector trends, rebalancing, or retirement planning — personalized to Jane's profile.</div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="suggestions" id="suggestions">
+      <button class="suggestion-btn" onclick="fillSuggestion(this)">Should I rebalance my portfolio?</button>
+      <button class="suggestion-btn" onclick="fillSuggestion(this)">Best sectors for passive income?</button>
+      <button class="suggestion-btn" onclick="fillSuggestion(this)">How should I split my $2,000/month?</button>
+      <button class="suggestion-btn" onclick="fillSuggestion(this)">529 plan strategy for both kids?</button>
+    </div>
+    <div class="input-row">
+      <div class="input-wrap">
+        <textarea id="chat-input" rows="1" placeholder="Ask Jane's wealth assistant anything…"></textarea>
+      </div>
+      <button id="send-btn" onclick="sendMessage()" title="Send">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+      </button>
+    </div>
+    <div class="input-hint">Powered by n8n · Claude AI · Live market data via Tavily &nbsp;·&nbsp; Not financial advice</div>
+  </div>
+</main>
+
+<script>
+  const chatArea = document.getElementById('chat-area');
+  const emptyState = document.getElementById('empty-state');
+  const input = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('send-btn');
+  const statusDot = document.getElementById('status-dot');
+  const webhookInput = document.getElementById('webhook-url');
+  const suggestions = document.getElementById('suggestions');
+
+  let conversationHistory = [];
+
+  input.addEventListener('input', () => {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+  });
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+
+  webhookInput.addEventListener('change', () => {
+    statusDot.classList.toggle('connected', webhookInput.value.trim().length > 10);
+  });
+
+  function fillSuggestion(btn) {
+    input.value = btn.textContent;
+    input.focus();
+    suggestions.style.display = 'none';
+  }
+
+  function addMessage(role, content) {
+    if (emptyState) emptyState.style.display = 'none';
+    suggestions.style.display = 'none';
+
+    const msg = document.createElement('div');
+    msg.className = `message ${role}`;
+
+    const label = document.createElement('div');
+    label.className = 'message-label';
+    label.textContent = role === 'user' ? 'You' : 'Wealth Assistant';
+
+    const bubble = document.createElement('div');
+    bubble.className = `bubble ${role}`;
+
+    if (role === 'assistant') {
+      bubble.innerHTML = formatResponse(content);
+    } else {
+      bubble.textContent = content;
+    }
+
+    msg.appendChild(label);
+    msg.appendChild(bubble);
+    chatArea.appendChild(msg);
+    chatArea.scrollTop = chatArea.scrollHeight;
+    return msg;
+  }
+
+  function formatResponse(text) {
+    let html = text
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/^#{1,3}\s+(.+)$/gm, '<h3>$1</h3>')
+      .replace(/⚠️\s*([^\n]+)/g, '<div class="flag-box warning">⚠️ $1</div>')
+      .replace(/✅\s*([^\n]+)/g, '<div class="flag-box success">✅ $1</div>')
+      .replace(/^[-•]\s+(.+)$/gm, '<li>$1</li>')
+      .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+      .replace(/disclaimer[:\s]+(.+)/gi, '<div class="disclaimer">$1</div>');
+
+    const paras = html.split(/\n{2,}/);
+    html = paras.map(p => {
+      if (p.startsWith('<h3>') || p.startsWith('<ul>') || p.startsWith('<div class="flag')) return p;
+      if (p.trim() && !p.startsWith('<')) return `<p>${p.replace(/\n/g, ' ')}</p>`;
+      return p;
+    }).join('');
+
+    return `<div class="response-content">${html}</div>`;
+  }
+
+  function showLoading() {
+    const wrap = document.createElement('div');
+    wrap.className = 'message assistant';
+    wrap.id = 'loading-msg';
+    const label = document.createElement('div');
+    label.className = 'message-label';
+    label.textContent = 'Wealth Assistant';
+    const loading = document.createElement('div');
+    loading.className = 'loading-bubble';
+    loading.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+    wrap.appendChild(label);
+    wrap.appendChild(loading);
+    chatArea.appendChild(wrap);
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }
+
+  function removeLoading() {
+    const el = document.getElementById('loading-msg');
+    if (el) el.remove();
+  }
+
+  async function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+
+    const webhookUrl = webhookInput.value.trim();
+    if (!webhookUrl) {
+      alert('Please enter your n8n webhook URL at the top of the screen.');
+      return;
+    }
+
+    addMessage('user', text);
+    conversationHistory.push({ role: 'user', content: text });
+    input.value = '';
+    input.style.height = 'auto';
+    sendBtn.disabled = true;
+    showLoading();
+
+    try {
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          chatInput: text,
+          sessionId: 'jane-demo-session',
+          history: conversationHistory.slice(-6)
+        })
+      });
+
+      removeLoading();
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      let reply = '';
+      const contentType = response.headers.get('content-type') || '';
+
+      if (contentType.includes('application/json')) {
+        const data = await response.json();
+        reply = data.output || data.text || data.message || data.response ||
+          (Array.isArray(data) && (data[0]?.output || data[0]?.text)) ||
+          JSON.stringify(data);
+      } else {
+        reply = await response.text();
+      }
+
+      if (!reply || reply === '{}') {
+        reply = 'Received a response but it was empty. Check your **Respond to Webhook** node — make sure the Response Body expression is set to `{{ $(\'AI Agent\').last().json.output }}`';
+      }
+
+      addMessage('assistant', reply);
+      conversationHistory.push({ role: 'assistant', content: reply });
+      statusDot.classList.add('connected');
+
+    } catch (err) {
+      removeLoading();
+      const isLocalFile = window.location.protocol === 'file:';
+      const hint = isLocalFile
+        ? 'You are opening this file directly from your desktop (file://). Try serving it with a local server instead — in your Terminal run: `npx serve .` then open the URL it gives you.'
+        : 'Make sure your n8n webhook URL is correct and your workflow is published.';
+      addMessage('assistant', `**Connection error:** ${err.message}\n\n${hint}`);
+      statusDot.classList.remove('connected');
+    }
+
+    sendBtn.disabled = false;
+    input.focus();
+  }
+</script>
+</body>
+</html>

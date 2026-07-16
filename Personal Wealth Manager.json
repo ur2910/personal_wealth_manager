@@ -1,0 +1,204 @@
+{
+  "name": "Personal Wealth Manager",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Webhook').first().json.body.chatInput }}",
+        "options": {
+          "systemMessage": "=You are an expert personal wealth management assistant for the following client. Always use this profile to personalize every response. Never give generic advice — always tie recommendations back to the client's specific situation.\n\n\nHere is your client's financial profile:\n{{$('Google Sheets').all().map(item => item.json.Attribute + ': ' + item.json.Value).join('\\n') }}\n\nBEHAVIOR RULES:\n- Always reference client's specific goals, allocation and timeline in your answers\n- Flag any misalignments between the client's current allocation and the goals proactively\n- Always end with a disclaimer that this is not \n  professional financial advice."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        576,
+        32
+      ],
+      "id": "f2952854-5cf1-468c-be95-483fcae206c1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-6",
+          "cachedResultName": "Claude Sonnet 4.6"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.5,
+      "position": [
+        592,
+        256
+      ],
+      "id": "d661d83b-f801-4afb-98f0-ba7e6bde2bfa",
+      "name": "Anthropic Chat Model",
+      "notesInFlow": false,
+      "credentials": {
+        "anthropicApi": {
+          "id": "yHbDIgAUKhr9suWj",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1wtzThUaPW0cSPJ5NfyV5q0uKELxJOyJBLr9yDIyMug8/edit?gid=0#gid=0",
+          "__regex": "https:\\/\\/(?:drive|docs)\\.google\\.com(?:\\/.*|)\\/d\\/([0-9a-zA-Z\\-_]+)(?:\\/.*|)"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Profile",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        352,
+        32
+      ],
+      "id": "bcaea1be-bc03-4144-8c4f-532206e374bf",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4Z6MA9Mu6XgvwGnr",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "query": "={{ $('When chat message received').first().json.chatInput }}",
+        "options": {}
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 1,
+      "position": [
+        720,
+        256
+      ],
+      "id": "6f3fbed9-c2b1-45a2-9994-7e99f83efc9a",
+      "name": "Search in Tavily",
+      "credentials": {
+        "tavilyApi": {
+          "id": "XVhchlVpcwv7ul0J",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "0580cd41-893c-4247-8fa8-89f79f64ca74",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        128,
+        32
+      ],
+      "id": "ed9e819c-c3dc-4090-beed-e559cbbb0ef4",
+      "name": "Webhook",
+      "webhookId": "0580cd41-893c-4247-8fa8-89f79f64ca74"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $('AI Agent').last().json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        928,
+        32
+      ],
+      "id": "eb79050c-cbc7-4baf-80b2-1883d36d7414",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search in Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "8045585b-3d50-4648-be47-c7684e7dfc39",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a98115d817b32e95b50c14cee89dcc03f61a813b0c9d74b4f958afeb4aa3cdab"
+  },
+  "nodeGroups": [],
+  "id": "C071KsR4HhgoFzIT",
+  "tags": []
+}
