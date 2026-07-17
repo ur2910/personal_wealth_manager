@@ -13,7 +13,7 @@
       "typeVersion": 3.1,
       "position": [
         576,
-        32
+        208
       ],
       "id": "f2952854-5cf1-468c-be95-483fcae206c1",
       "name": "AI Agent"
@@ -32,7 +32,7 @@
       "typeVersion": 1.5,
       "position": [
         592,
-        256
+        432
       ],
       "id": "d661d83b-f801-4afb-98f0-ba7e6bde2bfa",
       "name": "Anthropic Chat Model",
@@ -63,7 +63,7 @@
       "typeVersion": 4.7,
       "position": [
         352,
-        32
+        208
       ],
       "id": "bcaea1be-bc03-4144-8c4f-532206e374bf",
       "name": "Google Sheets",
@@ -83,7 +83,7 @@
       "typeVersion": 1,
       "position": [
         720,
-        256
+        432
       ],
       "id": "6f3fbed9-c2b1-45a2-9994-7e99f83efc9a",
       "name": "Search in Tavily",
@@ -107,7 +107,7 @@
       "typeVersion": 2.1,
       "position": [
         128,
-        32
+        208
       ],
       "id": "ed9e819c-c3dc-4090-beed-e559cbbb0ef4",
       "name": "Webhook",
@@ -123,10 +123,72 @@
       "typeVersion": 1.5,
       "position": [
         928,
-        32
+        208
       ],
       "id": "eb79050c-cbc7-4baf-80b2-1883d36d7414",
       "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "d016d322-444b-4c83-9c35-b74368a0a82b",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        128,
+        -128
+      ],
+      "id": "0997ebc0-33ee-429a-ad9a-30ecf15701d9",
+      "name": "Profile Webhook",
+      "webhookId": "d016d322-444b-4c83-9c35-b74368a0a82b"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1wtzThUaPW0cSPJ5NfyV5q0uKELxJOyJBLr9yDIyMug8/edit?gid=0#gid=0",
+          "__regex": "https:\\/\\/(?:drive|docs)\\.google\\.com(?:\\/.*|)\\/d\\/([0-9a-zA-Z\\-_]+)(?:\\/.*|)"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Profile",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        352,
+        -128
+      ],
+      "id": "bd597040-4ab7-4b78-857e-3df9671589fe",
+      "name": "Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4Z6MA9Mu6XgvwGnr",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($('Google Sheets1').all().map(item => ({attribute: item.json.Attribute, value: item.json.Value}))) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        576,
+        -128
+      ],
+      "id": "d7b5dc7e-e6f0-4158-abca-fdd3aa7e3804",
+      "name": "Respond to Profile Webhook"
     }
   ],
   "pinData": {},
@@ -185,6 +247,28 @@
           }
         ]
       ]
+    },
+    "Profile Webhook": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Profile Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -193,7 +277,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "8045585b-3d50-4648-be47-c7684e7dfc39",
+  "versionId": "af5eac13-519c-4832-ae76-3d4a99f9e95a",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "a98115d817b32e95b50c14cee89dcc03f61a813b0c9d74b4f958afeb4aa3cdab"
