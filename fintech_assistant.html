@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,6 +29,8 @@
     --warning-bg: #FFFBEB;
   }
 
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
     font-family: 'Inter', sans-serif;
     background: var(--cream);
@@ -35,7 +38,7 @@
     min-height: 100vh;
     display: grid;
     grid-template-columns: 340px 1fr;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto auto 1fr;
   }
 
   /* Header */
@@ -50,50 +53,69 @@
     border-bottom: 1px solid var(--navy-light);
   }
 
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+  .logo { display: flex; align-items: center; gap: 12px; }
 
   .logo-mark {
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     background: var(--gold);
     border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
   }
 
   .logo-mark svg { width: 18px; height: 18px; fill: var(--navy); }
 
   .logo-text {
     font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--white);
-    letter-spacing: 0.01em;
+    font-size: 18px; font-weight: 500;
+    color: var(--white); letter-spacing: 0.01em;
   }
 
   .logo-sub {
-    font-size: 11px;
-    color: var(--gold-light);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-top: 1px;
+    font-size: 11px; color: var(--gold-light);
+    letter-spacing: 0.08em; text-transform: uppercase; margin-top: 1px;
   }
 
   .header-badge {
-    font-size: 11px;
-    color: var(--gold-light);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-size: 11px; color: var(--gold-light);
+    letter-spacing: 0.06em; text-transform: uppercase;
     border: 1px solid var(--gold-light);
-    padding: 4px 10px;
-    border-radius: 20px;
-    opacity: 0.7;
+    padding: 4px 10px; border-radius: 20px; opacity: 0.7;
   }
+
+  /* Config bar */
+  .config-bar {
+    grid-column: 1 / -1;
+    background: var(--navy-mid);
+    padding: 0.5rem 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+
+  .config-label {
+    font-size: 11px; color: var(--gold-light); opacity: 0.7;
+    letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap;
+  }
+
+  .config-input {
+    flex: 1;
+    font-family: 'Inter', sans-serif; font-size: 12px;
+    padding: 5px 10px; border-radius: 6px;
+    border: 1px solid rgba(201, 168, 76, 0.3);
+    background: rgba(255,255,255,0.06); color: var(--white); outline: none;
+  }
+
+  .config-input:focus { border-color: var(--gold); }
+  .config-input::placeholder { color: rgba(255,255,255,0.3); }
+
+  .config-divider {
+    width: 1px; height: 20px;
+    background: rgba(255,255,255,0.15); flex-shrink: 0;
+  }
+
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #CBD5E0; flex-shrink: 0; transition: background 0.3s;
+  }
+  .status-dot.connected { background: #48BB78; }
 
   /* Sidebar */
   aside {
@@ -101,200 +123,150 @@
     border-right: 1px solid var(--border);
     overflow-y: auto;
     padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    display: flex; flex-direction: column; gap: 1.5rem;
+    grid-row: 3;
   }
 
   .section-label {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-muted);
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 0.75rem;
+  }
+
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 0.75rem;
   }
+
+  .section-header .section-label { margin-bottom: 0; }
+
+  .refresh-btn {
+    font-size: 10px; font-family: 'Inter', sans-serif;
+    padding: 3px 8px; border-radius: 4px;
+    border: 1px solid var(--border-gold);
+    background: transparent; color: var(--gold);
+    cursor: pointer; display: flex; align-items: center; gap: 4px;
+    transition: all 0.15s; letter-spacing: 0.03em;
+  }
+
+  .refresh-btn:hover { background: var(--gold-pale); }
+  .refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .refresh-icon { font-size: 11px; display: inline-block; transition: transform 0.4s; }
+  .refresh-icon.spinning { animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   /* Profile card */
   .profile-card {
-    background: var(--navy);
-    border-radius: 12px;
-    padding: 1.25rem;
-    position: relative;
-    overflow: hidden;
+    background: var(--navy); border-radius: 12px;
+    padding: 1.25rem; position: relative; overflow: hidden;
   }
 
   .profile-card::before {
-    content: '';
-    position: absolute;
-    top: -20px;
-    right: -20px;
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: var(--gold);
-    opacity: 0.08;
+    content: ''; position: absolute;
+    top: -20px; right: -20px;
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--gold); opacity: 0.08;
   }
 
   .profile-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
+    width: 44px; height: 44px; border-radius: 50%;
     background: var(--gold);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     font-family: 'Playfair Display', serif;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--navy);
-    margin-bottom: 0.75rem;
+    font-size: 16px; font-weight: 600;
+    color: var(--navy); margin-bottom: 0.75rem;
   }
 
   .profile-name {
     font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--white);
-    margin-bottom: 2px;
+    font-size: 18px; font-weight: 500; color: var(--white); margin-bottom: 2px;
   }
 
-  .profile-sub {
-    font-size: 12px;
-    color: var(--gold-light);
-    opacity: 0.8;
+  .profile-sub { font-size: 12px; color: var(--gold-light); opacity: 0.8; }
+
+  .profile-loading {
+    font-size: 12px; color: rgba(255,255,255,0.4);
+    font-style: italic; padding: 0.5rem 0;
   }
 
-  /* Profile stats grid */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-  }
+  /* Stats grid */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
 
   .stat-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.75rem;
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.75rem;
   }
 
   .stat-label {
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 4px;
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 4px;
   }
 
-  .stat-value {
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--text-primary);
-    line-height: 1.2;
-  }
+  .stat-value { font-size: 18px; font-weight: 500; color: var(--text-primary); line-height: 1.2; }
+  .stat-unit { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
-  .stat-unit {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-top: 2px;
-  }
-
-  /* Allocation bar */
+  /* Allocation */
   .allocation-section { margin-top: 0.25rem; }
 
   .allocation-bar {
-    height: 8px;
-    border-radius: 4px;
-    overflow: hidden;
-    display: flex;
-    margin: 0.5rem 0;
-    gap: 2px;
+    height: 8px; border-radius: 4px; overflow: hidden;
+    display: flex; margin: 0.5rem 0; gap: 2px;
   }
 
-  .bar-equity { background: var(--navy); flex: 50; }
-  .bar-bonds { background: var(--gold); flex: 40; }
-  .bar-cash { background: #CBD5E0; flex: 10; }
+  .allocation-legend { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 
-  .allocation-legend {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-  }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11px;
-    color: var(--text-secondary);
-  }
-
-  .legend-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-  }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-secondary); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
 
   /* Goals */
   .goals-list { display: flex; flex-direction: column; gap: 0.5rem; }
 
   .goal-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: var(--text-secondary);
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text-secondary);
     padding: 0.5rem 0.75rem;
-    background: var(--cream);
-    border-radius: 6px;
+    background: var(--cream); border-radius: 6px;
     border-left: 3px solid var(--gold);
   }
 
-  .goal-num {
-    font-size: 10px;
-    font-weight: 500;
-    color: var(--gold);
-    min-width: 14px;
+  .goal-num { font-size: 10px; font-weight: 500; color: var(--gold); min-width: 14px; }
+
+  /* Profile details */
+  .detail-row {
+    display: flex; justify-content: space-between;
+    font-size: 13px; padding: 6px 0;
+    border-bottom: 1px solid var(--border);
   }
 
-  /* Main content */
-  main {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+  .detail-row:last-child { border-bottom: none; }
+
+  /* Last updated */
+  .last-updated {
+    font-size: 10px; color: var(--text-muted);
+    font-style: italic; text-align: right; margin-top: -0.75rem;
   }
+
+  /* Main */
+  main { display: flex; flex-direction: column; overflow: hidden; grid-row: 3; }
 
   /* Chat area */
   .chat-area {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
+    flex: 1; overflow-y: auto; padding: 1.5rem;
+    display: flex; flex-direction: column; gap: 1.25rem;
   }
 
   .empty-state {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 3rem;
-    opacity: 0.6;
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 3rem; opacity: 0.6;
   }
 
   .empty-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+    width: 48px; height: 48px; border-radius: 12px;
     background: var(--gold-pale);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     margin: 0 auto 1rem;
   }
 
@@ -302,75 +274,51 @@
 
   .empty-title {
     font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
+    font-size: 18px; font-weight: 500;
+    color: var(--text-primary); margin-bottom: 0.5rem;
   }
 
-  .empty-sub {
-    font-size: 14px;
-    color: var(--text-muted);
-    max-width: 300px;
-    line-height: 1.6;
-  }
+  .empty-sub { font-size: 14px; color: var(--text-muted); max-width: 300px; line-height: 1.6; }
 
-  /* Message bubbles */
+  /* Messages */
   .message { display: flex; flex-direction: column; gap: 4px; max-width: 100%; }
-
   .message.user { align-items: flex-end; }
   .message.assistant { align-items: flex-start; }
 
   .message-label {
-    font-size: 11px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    font-weight: 500;
-    padding: 0 4px;
+    font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--text-muted); font-weight: 500; padding: 0 4px;
   }
 
   .bubble {
-    padding: 0.875rem 1.125rem;
-    border-radius: 12px;
-    font-size: 14px;
-    line-height: 1.7;
-    max-width: 88%;
+    padding: 0.875rem 1.125rem; border-radius: 12px;
+    font-size: 14px; line-height: 1.7; max-width: 88%;
   }
 
   .bubble.user {
-    background: var(--navy);
-    color: var(--white);
+    background: var(--navy); color: var(--white);
     border-radius: 12px 12px 2px 12px;
   }
 
   .bubble.assistant {
-    background: var(--white);
-    border: 1px solid var(--border);
-    color: var(--text-primary);
-    border-radius: 12px 12px 12px 2px;
+    background: var(--white); border: 1px solid var(--border);
+    color: var(--text-primary); border-radius: 12px 12px 12px 2px;
   }
 
-  /* Formatted response */
+  /* Response formatting */
   .response-content h3 {
     font-family: 'Playfair Display', serif;
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--navy);
+    font-size: 16px; font-weight: 500; color: var(--navy);
     margin: 1rem 0 0.5rem;
-    padding-bottom: 0.35rem;
-    border-bottom: 1px solid var(--border-gold);
+    padding-bottom: 0.35rem; border-bottom: 1px solid var(--border-gold);
   }
 
   .response-content h3:first-child { margin-top: 0; }
-
   .response-content p { margin-bottom: 0.75rem; font-size: 14px; line-height: 1.7; }
 
   .response-content ul {
     margin: 0.5rem 0 0.75rem 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
+    display: flex; flex-direction: column; gap: 0.35rem;
   }
 
   .response-content li { font-size: 14px; line-height: 1.6; }
@@ -378,78 +326,35 @@
   .flag-box {
     border-left: 3px solid var(--gold);
     background: var(--gold-pale);
-    padding: 0.75rem 1rem;
-    border-radius: 0 6px 6px 0;
-    margin: 0.75rem 0;
-    font-size: 13px;
-    line-height: 1.6;
-    color: var(--text-primary);
+    padding: 0.75rem 1rem; border-radius: 0 6px 6px 0;
+    margin: 0.75rem 0; font-size: 13px; line-height: 1.6; color: var(--text-primary);
   }
 
-  .flag-box.warning {
-    border-left-color: #D97706;
-    background: var(--warning-bg);
-    color: var(--warning);
-  }
-
-  .flag-box.success {
-    border-left-color: #276749;
-    background: var(--success-bg);
-    color: var(--success);
-  }
+  .flag-box.warning { border-left-color: #D97706; background: var(--warning-bg); color: var(--warning); }
+  .flag-box.success { border-left-color: #276749; background: var(--success-bg); color: var(--success); }
 
   .disclaimer {
-    font-size: 11px;
-    color: var(--text-muted);
-    font-style: italic;
-    border-top: 1px solid var(--border);
-    margin-top: 1rem;
-    padding-top: 0.75rem;
-    line-height: 1.6;
-  }
-
-  /* Sector tags */
-  .sector-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0.5rem 0; }
-
-  .sector-tag {
-    font-size: 12px;
-    font-weight: 500;
-    padding: 3px 10px;
-    border-radius: 20px;
-    border: 1px solid var(--border-gold);
-    color: var(--navy);
-    background: var(--gold-pale);
+    font-size: 11px; color: var(--text-muted); font-style: italic;
+    border-top: 1px solid var(--border); margin-top: 1rem;
+    padding-top: 0.75rem; line-height: 1.6;
   }
 
   /* Input area */
   .input-area {
     padding: 1rem 1.5rem 1.25rem;
-    background: var(--white);
-    border-top: 1px solid var(--border);
+    background: var(--white); border-top: 1px solid var(--border);
   }
 
-  .input-row {
-    display: flex;
-    gap: 0.75rem;
-    align-items: flex-end;
-  }
-
+  .input-row { display: flex; gap: 0.75rem; align-items: flex-end; }
   .input-wrap { flex: 1; position: relative; }
 
   #chat-input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    resize: none;
-    outline: none;
-    color: var(--text-primary);
-    background: var(--cream);
-    line-height: 1.5;
-    min-height: 44px;
-    max-height: 120px;
+    width: 100%; padding: 0.75rem 1rem;
+    font-family: 'Inter', sans-serif; font-size: 14px;
+    border: 1px solid var(--border); border-radius: 10px;
+    resize: none; outline: none;
+    color: var(--text-primary); background: var(--cream);
+    line-height: 1.5; min-height: 44px; max-height: 120px;
     transition: border-color 0.15s;
   }
 
@@ -457,74 +362,42 @@
   #chat-input::placeholder { color: var(--text-muted); }
 
   #send-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
-    background: var(--navy);
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background 0.15s;
+    width: 44px; height: 44px; border-radius: 10px;
+    background: var(--navy); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: background 0.15s;
   }
 
   #send-btn:hover { background: var(--navy-light); }
   #send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   #send-btn svg { width: 18px; height: 18px; fill: none; stroke: white; stroke-width: 2; }
 
-  .input-hint {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-top: 0.5rem;
-    text-align: center;
-  }
+  .input-hint { font-size: 11px; color: var(--text-muted); margin-top: 0.5rem; text-align: center; }
 
   /* Suggestions */
-  .suggestions {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    margin-bottom: 0.75rem;
-  }
+  .suggestions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
 
   .suggestion-btn {
-    font-size: 12px;
-    font-family: 'Inter', sans-serif;
-    padding: 5px 12px;
-    border-radius: 20px;
+    font-size: 12px; font-family: 'Inter', sans-serif;
+    padding: 5px 12px; border-radius: 20px;
     border: 1px solid var(--border);
-    background: var(--white);
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all 0.15s;
+    background: var(--white); color: var(--text-secondary);
+    cursor: pointer; transition: all 0.15s;
   }
 
-  .suggestion-btn:hover {
-    border-color: var(--gold);
-    color: var(--navy);
-    background: var(--gold-pale);
-  }
+  .suggestion-btn:hover { border-color: var(--gold); color: var(--navy); background: var(--gold-pale); }
 
-  /* Loading */
+  /* Loading dots */
   .loading-bubble {
-    display: flex;
-    gap: 4px;
-    align-items: center;
+    display: flex; gap: 4px; align-items: center;
     padding: 0.875rem 1.125rem;
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 12px 12px 12px 2px;
-    width: fit-content;
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 12px 12px 12px 2px; width: fit-content;
   }
 
   .dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--gold);
-    animation: pulse 1.2s ease-in-out infinite;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--gold); animation: pulse 1.2s ease-in-out infinite;
   }
 
   .dot:nth-child(2) { animation-delay: 0.2s; }
@@ -534,50 +407,6 @@
     0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; }
     40% { transform: scale(1); opacity: 1; }
   }
-
-  /* n8n webhook config */
-  .config-bar {
-    background: var(--navy-mid);
-    padding: 0.5rem 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .config-label {
-    font-size: 11px;
-    color: var(--gold-light);
-    opacity: 0.7;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  #webhook-url {
-    flex: 1;
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    padding: 5px 10px;
-    border-radius: 6px;
-    border: 1px solid rgba(201, 168, 76, 0.3);
-    background: rgba(255,255,255,0.06);
-    color: var(--white);
-    outline: none;
-  }
-
-  #webhook-url:focus { border-color: var(--gold); }
-  #webhook-url::placeholder { color: rgba(255,255,255,0.3); }
-
-  .status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #CBD5E0;
-    flex-shrink: 0;
-    transition: background 0.3s;
-  }
-
-  .status-dot.connected { background: #48BB78; }
 
   /* Scrollbar */
   .chat-area::-webkit-scrollbar { width: 4px; }
@@ -593,20 +422,35 @@
       <svg viewBox="0 0 20 20"><path d="M10 2L13 8H17L14 12L15 18L10 15L5 18L6 12L3 8H7L10 2Z"/></svg>
     </div>
     <div>
-      <div class="logo-text">Wealth Assistant</div>
-      <div class="logo-sub">Personal Finance Intelligence</div>
+      <div class="logo-text">Personal Wealth Manager</div>
+      
     </div>
   </div>
-  <div class="header-badge">Portfolio Demo</div>
+  <div class="header-badge">Demo</div>
 </header>
+
+<!-- Unified config bar for both webhooks -->
+<div class="config-bar">
+  <span class="config-label">Chat</span>
+  <input class="config-input" id="webhook-url" type="text" placeholder="http://localhost:5678/webhook/your-chat-id" />
+  <div class="config-divider"></div>
+  <span class="config-label">Profile</span>
+  <input class="config-input" id="profile-webhook-url" type="text" placeholder="http://localhost:5678/webhook/your-profile-id" />
+  <div class="status-dot" id="status-dot"></div>
+</div>
 
 <aside>
   <div>
-    <div class="section-label">Client Profile</div>
+    <div class="section-header">
+      <span class="section-label">Client Profile</span>
+      <button class="refresh-btn" id="refresh-btn" onclick="loadProfile()">
+        <span class="refresh-icon" id="refresh-icon">↻</span> Refresh
+      </button>
+    </div>
     <div class="profile-card">
-      <div class="profile-avatar">JD</div>
-      <div class="profile-name">Jane Doe</div>
-      <div class="profile-sub">Moderate risk · Target retirement 2044</div>
+      <div class="profile-avatar" id="profile-avatar">—</div>
+      <div class="profile-name" id="profile-name">Loading...</div>
+      <div class="profile-sub" id="profile-sub">Fetching profile data</div>
     </div>
   </div>
 
@@ -615,101 +459,70 @@
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-label">Age</div>
-        <div class="stat-value">41</div>
-        <div class="stat-unit">19 yrs to retirement</div>
+        <div class="stat-value" id="stat-age">—</div>
+        <div class="stat-unit" id="stat-runway">— yrs to retirement</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Monthly Income</div>
-        <div class="stat-value">$15K</div>
+        <div class="stat-value" id="stat-income">—</div>
         <div class="stat-unit">per month</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Investable</div>
-        <div class="stat-value">$2,000</div>
+        <div class="stat-value" id="stat-investable">—</div>
         <div class="stat-unit">per month</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Emergency Fund</div>
-        <div class="stat-value">8 mo</div>
-        <div class="stat-unit">well funded</div>
+        <div class="stat-value" id="stat-emergency">—</div>
+        <div class="stat-unit" id="stat-emergency-label">months</div>
       </div>
     </div>
   </div>
 
   <div class="allocation-section">
     <div class="section-label">Current Allocation</div>
-    <div class="allocation-bar">
-      <div class="bar-equity"></div>
-      <div class="bar-bonds"></div>
-      <div class="bar-cash"></div>
+    <div class="allocation-bar" id="allocation-bar">
+      <div style="background:var(--navy);flex:1"></div>
     </div>
-    <div class="allocation-legend">
-      <div class="legend-item">
-        <div class="legend-dot" style="background: var(--navy)"></div>
-        Equity 50%
-      </div>
-      <div class="legend-item">
-        <div class="legend-dot" style="background: var(--gold)"></div>
-        Bonds 40%
-      </div>
-      <div class="legend-item">
-        <div class="legend-dot" style="background: #CBD5E0"></div>
-        Cash 10%
-      </div>
+    <div class="allocation-legend" id="allocation-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#CBD5E0"></div>Loading...</div>
     </div>
   </div>
 
   <div>
     <div class="section-label">Financial Goals</div>
-    <div class="goals-list">
-      <div class="goal-item"><span class="goal-num">01</span>Retirement security by age 60</div>
-      <div class="goal-item"><span class="goal-num">02</span>College fund — children ages 9 &amp; 2</div>
-      <div class="goal-item"><span class="goal-num">03</span>Build passive income stream</div>
+    <div class="goals-list" id="goals-list">
+      <div class="goal-item"><span class="goal-num">—</span>Loading goals...</div>
     </div>
   </div>
 
   <div>
     <div class="section-label">Profile Details</div>
-    <div style="display:flex;flex-direction:column;gap:6px;">
-      <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border)">
-        <span style="color:var(--text-muted)">Risk tolerance</span>
-        <span style="font-weight:500">Moderate</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border)">
-        <span style="color:var(--text-muted)">Debt</span>
-        <span style="font-weight:500">Mortgage only</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0">
-        <span style="color:var(--text-muted)">Other income</span>
-        <span style="font-weight:500">None</span>
-      </div>
+    <div id="profile-details" style="display:flex;flex-direction:column;gap:0;">
+      <div class="detail-row"><span style="color:var(--text-muted)">Risk tolerance</span><span style="font-weight:500" id="detail-risk">—</span></div>
+      <div class="detail-row"><span style="color:var(--text-muted)">Debt</span><span style="font-weight:500" id="detail-debt">—</span></div>
+      <div class="detail-row"><span style="color:var(--text-muted)">Other income</span><span style="font-weight:500" id="detail-income">—</span></div>
     </div>
+    <div class="last-updated" id="last-updated"></div>
   </div>
 </aside>
 
 <main>
-  <div class="config-bar">
-    <span class="config-label">n8n webhook</span>
-    <input id="webhook-url" type="text" placeholder="http://localhost:5678/webhook/your-id" />
-    <div class="status-dot" id="status-dot"></div>
-  </div>
-
   <div class="chat-area" id="chat-area">
     <div class="empty-state" id="empty-state">
       <div class="empty-icon">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
       </div>
       <div class="empty-title">Your Wealth Manager is ready</div>
-      <div class="empty-sub">Ask about investments, sector trends, rebalancing, or retirement planning — personalized to Jane's profile.</div>
+      <div class="empty-sub">Ask about investments, sector trends, rebalancing, or retirement planning — personalized to your profile.</div>
     </div>
   </div>
 
   <div class="input-area">
     <div class="suggestions" id="suggestions">
-      <button class="suggestion-btn" onclick="fillSuggestion(this)">Which sectors should I invest more in?</button>
       <button class="suggestion-btn" onclick="fillSuggestion(this)">Best sectors for passive income?</button>
       <button class="suggestion-btn" onclick="fillSuggestion(this)">Do I have enough emergency funds?</button>
-      <button class="suggestion-btn" onclick="fillSuggestion(this)">What should be my strategy for education savings?</button>
     </div>
     <div class="input-row">
       <div class="input-wrap">
@@ -719,7 +532,7 @@
         <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
       </button>
     </div>
-    <div class="input-hint">Powered by n8n · Claude AI · Live market data via Tavily &nbsp;·&nbsp; Disclaimer: AI can make mistakes. </div>
+    <div class="input-hint">Powered by n8n · Claude AI · Live market data via Tavily &nbsp;·&nbsp; Disclaimer: AI can make mistakes.</div>
   </div>
 </main>
 
@@ -730,10 +543,151 @@
   const sendBtn = document.getElementById('send-btn');
   const statusDot = document.getElementById('status-dot');
   const webhookInput = document.getElementById('webhook-url');
+  const profileWebhookInput = document.getElementById('profile-webhook-url');
   const suggestions = document.getElementById('suggestions');
 
   let conversationHistory = [];
 
+  // ── Auto-save webhook URLs in localStorage ──
+  const CHAT_KEY = 'wm_chat_webhook';
+  const PROFILE_KEY = 'wm_profile_webhook';
+
+  if (localStorage.getItem(CHAT_KEY)) webhookInput.value = localStorage.getItem(CHAT_KEY);
+  if (localStorage.getItem(PROFILE_KEY)) profileWebhookInput.value = localStorage.getItem(PROFILE_KEY);
+
+  webhookInput.addEventListener('change', () => {
+    localStorage.setItem(CHAT_KEY, webhookInput.value.trim());
+    updateStatusDot();
+  });
+
+  profileWebhookInput.addEventListener('change', () => {
+    localStorage.setItem(PROFILE_KEY, profileWebhookInput.value.trim());
+    if (profileWebhookInput.value.trim()) loadProfile();
+  });
+
+  function updateStatusDot() {
+    statusDot.classList.toggle('connected', webhookInput.value.trim().length > 10);
+  }
+
+  // ── Profile loading ──
+  async function loadProfile() {
+    const profileUrl = profileWebhookInput.value.trim();
+    if (!profileUrl) return;
+
+    const btn = document.getElementById('refresh-btn');
+    const icon = document.getElementById('refresh-icon');
+    btn.disabled = true;
+    icon.classList.add('spinning');
+
+    try {
+      const res = await fetch(profileUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'getProfile' })
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const contentType = res.headers.get('content-type') || '';
+      let data;
+
+      if (contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        try { data = JSON.parse(text); } catch { throw new Error('Invalid JSON response'); }
+      }
+
+      // Handle both array format and object format
+      const rows = Array.isArray(data) ? data : (data.rows || data.data || []);
+      const profile = {};
+      rows.forEach(row => {
+        const attr = (row.attribute || row.Attribute || '').toLowerCase().replace(/\s+/g, '_');
+        profile[attr] = row.value || row.Value || '';
+      });
+
+      renderProfile(profile);
+      document.getElementById('last-updated').textContent = 'Last updated ' + new Date().toLocaleTimeString();
+
+    } catch (err) {
+      document.getElementById('profile-name').textContent = 'Could not load profile';
+      document.getElementById('profile-sub').textContent = err.message;
+    } finally {
+      btn.disabled = false;
+      icon.classList.remove('spinning');
+    }
+  }
+
+  function renderProfile(p) {
+    // Avatar & name
+    const name = p['name'] || 'Client';
+    const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    document.getElementById('profile-avatar').textContent = initials;
+    document.getElementById('profile-name').textContent = name;
+
+    // Retirement year
+    const age = parseInt(p['age']) || 0;
+    const retireAge = parseInt(p['retirement_target_age']) || 0;
+    const retireYear = new Date().getFullYear() + (retireAge - age);
+    const runway = retireAge - age;
+    document.getElementById('profile-sub').textContent =
+      `${p['risk_tolerance'] || 'Moderate'} risk · Target retirement ${retireYear}`;
+
+    // Stats
+    document.getElementById('stat-age').textContent = p['age'] || '—';
+    document.getElementById('stat-runway').textContent = runway > 0 ? `${runway} yrs to retirement` : '—';
+
+    const income = p['monthly_income'] || '';
+    const incomeNum = parseInt(income.toString().replace(/[^0-9]/g, ''));
+    document.getElementById('stat-income').textContent = incomeNum >= 1000
+      ? '$' + (incomeNum / 1000).toFixed(0) + 'K' : (income ? '$' + income : '—');
+
+    const inv = p['monthly_investable_amount'] || '';
+    const invNum = parseInt(inv.toString().replace(/[^0-9]/g, ''));
+    document.getElementById('stat-investable').textContent = invNum
+      ? '$' + invNum.toLocaleString() : (inv || '—');
+
+    const ef = p['emergency_fund'] || '';
+    const efMatch = ef.match(/\d+/);
+    document.getElementById('stat-emergency').textContent = efMatch ? efMatch[0] + ' mo' : (ef || '—');
+    document.getElementById('stat-emergency-label').textContent =
+      parseInt(efMatch?.[0]) >= 6 ? 'well funded' : 'months';
+
+    // Allocation bar
+    const alloc = p['current_allocation'] || '';
+    const equityMatch = alloc.match(/(\d+)%?\s*equity/i);
+    const bondMatch = alloc.match(/(\d+)%?\s*bond/i);
+    const cashMatch = alloc.match(/(\d+)%?\s*cash/i);
+    const equity = equityMatch ? parseInt(equityMatch[1]) : 50;
+    const bonds = bondMatch ? parseInt(bondMatch[1]) : 40;
+    const cash = cashMatch ? parseInt(cashMatch[1]) : 10;
+
+    document.getElementById('allocation-bar').innerHTML = `
+      <div style="background:var(--navy);flex:${equity}"></div>
+      <div style="background:var(--gold);flex:${bonds}"></div>
+      <div style="background:#CBD5E0;flex:${cash}"></div>`;
+
+    document.getElementById('allocation-legend').innerHTML = `
+      <div class="legend-item"><div class="legend-dot" style="background:var(--navy)"></div>Equity ${equity}%</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Bonds ${bonds}%</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#CBD5E0"></div>Cash ${cash}%</div>`;
+
+    // Goals
+    const goalsRaw = p['top_3_goals'] || p['goals'] || '';
+    const goalLines = goalsRaw.split(/\n|\\n/).map(g => g.replace(/^\d+\.\s*/, '').trim()).filter(Boolean);
+    if (goalLines.length) {
+      document.getElementById('goals-list').innerHTML = goalLines
+        .map((g, i) => `<div class="goal-item"><span class="goal-num">0${i+1}</span>${g}</div>`)
+        .join('');
+    }
+
+    // Details
+    document.getElementById('detail-risk').textContent = p['risk_tolerance'] || '—';
+    document.getElementById('detail-debt').textContent = p['debt'] || '—';
+    document.getElementById('detail-income').textContent = p['other_income_sources'] || p['other_income'] || '—';
+  }
+
+  // ── Chat ──
   input.addEventListener('input', () => {
     input.style.height = 'auto';
     input.style.height = Math.min(input.scrollHeight, 120) + 'px';
@@ -741,10 +695,6 @@
 
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-  });
-
-  webhookInput.addEventListener('change', () => {
-    statusDot.classList.toggle('connected', webhookInput.value.trim().length > 10);
   });
 
   function fillSuggestion(btn) {
@@ -766,12 +716,8 @@
 
     const bubble = document.createElement('div');
     bubble.className = `bubble ${role}`;
-
-    if (role === 'assistant') {
-      bubble.innerHTML = formatResponse(content);
-    } else {
-      bubble.textContent = content;
-    }
+    bubble.innerHTML = role === 'assistant' ? formatResponse(content) : '';
+    if (role === 'user') bubble.textContent = content;
 
     msg.appendChild(label);
     msg.appendChild(bubble);
@@ -806,7 +752,7 @@
     wrap.id = 'loading-msg';
     const label = document.createElement('div');
     label.className = 'message-label';
-    label.textContent = 'Wealth Assistant';
+    label.textContent = 'Wealth Manager';
     const loading = document.createElement('div');
     loading.className = 'loading-bubble';
     loading.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
@@ -827,7 +773,7 @@
 
     const webhookUrl = webhookInput.value.trim();
     if (!webhookUrl) {
-      alert('Please enter your n8n webhook URL at the top of the screen.');
+      alert('Please enter your n8n chat webhook URL at the top of the screen.');
       return;
     }
 
@@ -841,22 +787,16 @@
     try {
       const response = await fetch(webhookUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
           chatInput: text,
-          sessionId: 'jane-demo-session',
+          sessionId: 'wealth-demo-session',
           history: conversationHistory.slice(-6)
         })
       });
 
       removeLoading();
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       let reply = '';
       const contentType = response.headers.get('content-type') || '';
@@ -871,7 +811,7 @@
       }
 
       if (!reply || reply === '{}') {
-        reply = 'Received a response but it was empty. Check your **Respond to Webhook** node — make sure the Response Body expression is set to `{{ $(\'AI Agent\').last().json.output }}`';
+        reply = 'Received an empty response. Check your **Respond to Webhook** node expression.';
       }
 
       addMessage('assistant', reply);
@@ -882,7 +822,7 @@
       removeLoading();
       const isLocalFile = window.location.protocol === 'file:';
       const hint = isLocalFile
-        ? 'You are opening this file directly from your desktop (file://). Try serving it with a local server instead — in your Terminal run: `npx serve .` then open the URL it gives you.'
+        ? 'You are opening this as a local file. Run `npx serve .` in Terminal and open the URL it provides.'
         : 'Make sure your n8n webhook URL is correct and your workflow is published.';
       addMessage('assistant', `**Connection error:** ${err.message}\n\n${hint}`);
       statusDot.classList.remove('connected');
@@ -891,6 +831,10 @@
     sendBtn.disabled = false;
     input.focus();
   }
+
+  // ── Init ──
+  updateStatusDot();
+  if (profileWebhookInput.value.trim()) loadProfile();
 </script>
 </body>
 </html>
